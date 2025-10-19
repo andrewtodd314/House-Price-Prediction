@@ -22,4 +22,48 @@ def predict_price(
         'waterfront': waterfront,
         'view': view,
         'grade': grade,
-        'yr_built'_
+        'yr_built': yr_built,
+        'yr_renovated': yr_renovated,
+        'lat': lat,
+        'long': long,
+        'sqft_living15': sqft_living15,
+        'sqft_lot15': sqft_lot15,
+        'month_sold': month_sold
+    }])
+
+    # Predict log(price)
+    log_pred = model.predict(input_data)
+
+    # Convert back to actual price
+    price_pred = np.exp(log_pred)
+
+    # Return nicely formatted string
+    return f"${price_pred[0]:,.2f}"
+
+# Create Gradio interface
+interface = gr.Interface(
+    fn=predict_price,
+    inputs=[
+        gr.Number(label="Bedrooms"),
+        gr.Number(label="Bathrooms"),
+        gr.Number(label="Sqft Living"),
+        gr.Number(label="Sqft Lot"),
+        gr.Number(label="Floors"),
+        gr.Number(label="Waterfront (0/1)"),
+        gr.Number(label="View (0-4)"),
+        gr.Number(label="Grade (1-13)"),
+        gr.Number(label="Year Built"),
+        gr.Number(label="Year Renovated"),
+        gr.Number(label="Latitude"),
+        gr.Number(label="Longitude"),
+        gr.Number(label="Sqft Living 15"),
+        gr.Number(label="Sqft Lot 15"),
+        gr.Number(label="Month Sold (1-12)")
+    ],
+    outputs=gr.Textbox(label="Predicted House Price"),
+    title="🏠 House Price Prediction App",
+    description="Enter the features of a house to get the predicted price."
+)
+
+# Launch app
+interface.launch()
